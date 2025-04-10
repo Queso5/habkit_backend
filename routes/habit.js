@@ -3,6 +3,15 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const Habit = require('../models/Habit');
 
+router.get('/', auth, async (req, res) => {
+  try {
+    const habits = await Habit.find({ user: req.user.id }).sort({ createdAt: -1 });
+    res.json(habits);
+  } catch (err) {
+    console.error('Fetch habits error:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
 // Toggle habit completion for a date
 router.post('/:id/toggle', auth, async (req, res) => {
   const habitId = req.params.id;
